@@ -27,7 +27,9 @@ Graph.prototype.removeNode = function(node){
 };
 
 Graph.prototype.hasEdge = function(fromValue, toValue){
-  return this.nodes[fromValue].linkedNodes.hasOwnProperty(toValue);
+  if(this.contains(fromValue) && this.contains(toValue)){
+    return this.nodes[fromValue].linkedNodes.hasOwnProperty(toValue);
+  }
 };
 
 Graph.prototype.addEdge = function(fromValue, toValue){
@@ -46,9 +48,14 @@ Graph.prototype.addEdge = function(fromValue, toValue){
 };
 
 Graph.prototype.removeEdge = function(fromValue, toValue){
+  delete this.nodes[fromValue].linkedNodes[toValue];
+  delete this.nodes[toValue].linkedNodes[fromValue];
 };
 
 Graph.prototype.forEachNode = function(cb){
+  _.each(this.nodes, function(node){
+    cb(node.value);
+  });
 };
 
 /*

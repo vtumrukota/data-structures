@@ -26,13 +26,26 @@ Graph.prototype.removeNode = function(node){
   delete this.nodes[node];
 };
 
-Graph.prototype.hasEdge = function(fromNode, toNode){
+Graph.prototype.hasEdge = function(fromValue, toValue){
+  return this.nodes[fromValue].linkedNodes.hasOwnProperty(toValue);
 };
 
-Graph.prototype.addEdge = function(fromNode, toNode){
+Graph.prototype.addEdge = function(fromValue, toValue){
+  //verify from and to node exist in graph
+  if(this.contains(fromValue) && this.contains(toValue)){
+  //find fromNode object
+  //find toNode object
+
+  //add refrence to toNode object in fromNode object linkedNodes object
+    this.nodes[toValue].linkedNodes[fromValue] = this.nodes[fromValue];
+
+  //add refrence to FromNode object in ToNode object linkedNodes object
+    this.nodes[fromValue].linkedNodes[toValue] = this.nodes[toValue];
+
+  }
 };
 
-Graph.prototype.removeEdge = function(fromNode, toNode){
+Graph.prototype.removeEdge = function(fromValue, toValue){
 };
 
 Graph.prototype.forEachNode = function(cb){

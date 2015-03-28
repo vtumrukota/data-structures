@@ -60,4 +60,34 @@ describe('tree', function() {
 
   });
 
+  it('should correctly assign the parent', function(){
+    tree.addChild(5);
+    tree.addChild(6);
+    tree.children[0].addChild(7);
+    tree.children[1].addChild(8);
+    tree.children[1].addChild(9);
+    expect(tree.children[1].children[0].parent.value).to.equal(6);
+  });
+
+  it('should correctly remove a node and reassign its parent', function(){
+    tree.addChild(5);
+    tree.addChild(6);
+    tree.children[0].addChild(7);
+    tree.children[1].addChild(8);
+    tree.children[1].addChild(9);
+    tree.children[1].addChild(12);
+    tree.children[1].children[1].addChild(1);
+    tree.children[1].children[1].addChild(2);
+    var item = tree.removeFromParent(tree.children[1].children[1]);
+    expect(item.value).to.equal(9);
+    var sum = 0;
+    tree.traverse(function(value){
+      if(value !== null && value !== undefined){
+      sum=sum + value;
+      }
+    });
+    expect(+sum).to.equal(38);
+  });
+
+
 });

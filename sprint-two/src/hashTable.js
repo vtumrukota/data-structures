@@ -28,6 +28,9 @@ HashTable.prototype.insert = function(k, v){
 HashTable.prototype.retrieve = function(k){
   var i = getIndexBelowMaxForKey(k, this._limit);
   var retrievedValue = this._storage.get(i);
+  if(retrievedValue === null || retrievedValue === undefined){
+    return null;
+  }
   var value;
   if(Array.isArray(retrievedValue[0])){    //if retrieved value is a bucket (array of tuples)
     _.each(retrievedValue, function(tuple){
@@ -47,15 +50,20 @@ HashTable.prototype.remove = function(k){
   var retrievedValue = this._storage.get(i);
   if(Array.isArray(retrievedValue[0])){
     var indexTuple;
-    _.each()
-  //check to see if item is a singular tuple or is in a bucket
-  if(Array.isArray(this._storage.get(i)[0]){
-
-  }else{
-
+    _.each(retrievedValue, function(tuple,eachIndex){
+      if(tuple[0] === k){
+        indexTuple = eachIndex;
+      }
+    });
+    retrievedValue = retrievedValue.splice(indexTuple,1);
+    if(retrievedValue.length ===1){
+      this._storage.set(i,retrievedValue[0]);
+    } else{
+      this._storage.set(i,retrievedValue);
+    }
+  } else{
+    this._storage.set(i , null);
   }
-  this._storage.set(i, null);
-
 };
 
 

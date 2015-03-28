@@ -1,10 +1,12 @@
 var HashTable = function(){
   this._limit = 8;
   this._storage = LimitedArray(this._limit);
+  // this._storage.each(function(bucket , i ,storage){
+  //   storage[i] = [];
+  // });
   for(var i = 0; i < this._limit; i++){
     this._storage.set(i,[]);
   }
-  //this._storage = [];
 };
 
 HashTable.prototype.insert = function(k, v){
@@ -45,7 +47,36 @@ HashTable.prototype.remove = function(k){
   }
 };
 
+HashTable.prototype.increaseSize = function(){
 
+// GET current size limit
+// CREATE new Array Like Object with size limit * 2
+// SET each element to empty array
+// FOR each element in old storage
+//   RETRIEVE element and rehash with new size limit
+//   INSERT element into new storage object
+// SET old storage object to new storage object
+
+var newSize = this_.limit * 2;
+var newStorage = LimitedArray(newSize);
+for(var i = 0; i < newStorage; i++){
+  newStorage.set(i,[]);
+}
+for(var i = 0; i < this_.limit; i++){
+  var retrievedBucket = this._storage.get(i);
+  for(var j = 0; j < retrievedBucket.length; j++){
+    var hashIndex = getIndexBelowMaxForKey(retrivedBucket[j][0],newSize);
+    var newStorageRetrievedBucket = newStorage.get(hashIndex);
+    newStorageRetrievedBucket.push(retrievedBucket[j]);
+    newStorage.set(hashIndex,newStorageRetrievedBucket);
+  }
+}
+
+};
+
+HashTable.prototype.decreaseSize = function(){
+
+}
 
 /*
  * Complexity: What is the time complexity of the above functions?

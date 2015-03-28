@@ -36,6 +36,24 @@ treeMethods.contains = function(target){
 };
 
 
+treeMethods.traverse = function(cb){
+//RECURSIVE SUB FUNCTION
+  var recursiveCb = function(tree){
+// CALL call back on current value
+    cb(tree.value);
+// FOR all children elements
+    _.each(tree.children, function(child){
+
+      recursiveCb(child);
+    });
+//   CALL RECURSIVE SUB FUNCTION on each child element
+
+// INVOKE RECURSIVE SUB FUNCTION  //base case
+  };
+  recursiveCb(this);
+};
+
+
 /*
  * Complexity: What is the time complexity of the above functions?
  */

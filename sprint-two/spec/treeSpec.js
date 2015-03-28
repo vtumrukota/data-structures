@@ -41,4 +41,23 @@ describe('tree', function() {
     expect(tree.contains(8)).to.equal(true);
   });
 
+  it('should traverse the tree and perform a callback', function(){
+    var testArray = [];
+    var callback = function(val){
+      if(val !== undefined){
+        testArray.push(val);
+      }
+    }
+    tree.addChild(5);
+    tree.addChild(6);
+    tree.children[0].addChild(7);
+    tree.children[1].addChild(8);
+    tree.children[1].addChild(12);
+    tree.traverse(callback);
+    expect(_.isEqual(testArray.sort(function(a,b){
+      return a-b;
+    }),[5,6,7,8,12])).to.be.true;
+
+  });
+
 });

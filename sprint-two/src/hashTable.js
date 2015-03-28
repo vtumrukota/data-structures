@@ -1,6 +1,7 @@
 var HashTable = function(){
   this._limit = 8;
   this._storage = LimitedArray(this._limit);
+  this._size = 0;
   // this._storage.each(function(bucket , i ,storage){
   //   storage[i] = [];
   // });
@@ -15,6 +16,11 @@ HashTable.prototype.insert = function(k, v){
   var existingBucket = this._storage.get(i);
   existingBucket.push(tuple);
   this._storage.set(i , existingBucket);
+  this._size++;
+
+  if(this._size >= .75 * this._limit){
+    this.increaseSize();
+  }
 };
 
 HashTable.prototype.retrieve = function(k){
@@ -35,19 +41,28 @@ HashTable.prototype.retrieve = function(k){
 HashTable.prototype.remove = function(k){
   var i = getIndexBelowMaxForKey(k,this._limit);
   var retrievedValue = this._storage.get(i);
-  if(retrievedValue.length > 0){
-    var indexTuple;
-    _.each(retrievedValue, function(tuple,eachIndex){
-      if(tuple[0] === k){
-        indexTuple = eachIndex;
-      }
-    });
-    retrievedValue.splice(indexTuple,1);
-    this._storage.set(i,retrievedValue);
+  if(retrievedValue === null || retrievedValue === undefined){
+    return;
+  } else { 
+    if(retrievedValue.length > 0){
+      var indexTuple;
+      _.each(retrievedValue, function(tuple,eachIndex){
+        if(tuple[0] === k){
+          indexTuple = eachIndex;
+        }
+      });
+      retrievedValue.splice(indexTuple,1);
+      this._storage.set(i,retrievedValue);
+    } else {
+      this.storage.set(i , []);
+    }
+    this._size--;
+    if(this._size < .25 * this._limit){
+      this.decreaseSize();
+    }
   }
 };
 
-HashTable.prototype.increaseSize = function(){
 
 // GET current size limit
 // CREATE new Array Like Object with size limit * 2
@@ -57,25 +72,31 @@ HashTable.prototype.increaseSize = function(){
 //   INSERT element into new storage object
 // SET old storage object to new storage object
 
-var newSize = this_.limit * 2;
-var newStorage = LimitedArray(newSize);
-for(var i = 0; i < newStorage; i++){
-  newStorage.set(i,[]);
-}
-for(var i = 0; i < this_.limit; i++){
-  var retrievedBucket = this._storage.get(i);
-  for(var j = 0; j < retrievedBucket.length; j++){
-    var hashIndex = getIndexBelowMaxForKey(retrivedBucket[j][0],newSize);
-    var newStorageRetrievedBucket = newStorage.get(hashIndex);
-    newStorageRetrievedBucket.push(retrievedBucket[j]);
-    newStorage.set(hashIndex,newStorageRetrievedBucket);
-  }
-}
-
+HashTable.prototype.increaseSize = function(){
+  this._limit = this._limit * 2;
+  this._storage = this.reHash(this._storage,this._limit * .5, this._limit);
 };
 
 HashTable.prototype.decreaseSize = function(){
+  this._limit = this._limit * .5;
+  this._storage = this.reHash(this._storage,this._limit*2,this._limit);
+};
 
+HashTable.prototype.reHash = function(fromArray,fromSize,toSize){
+  var newStorage = LimitedArray(toSize);
+  for(var i = 0; i < toSize; i++){
+    newStorage.set(i,[]);
+  }
+  for(var i = 0; i < fromSize; i++){
+    var retrievedBucket = fromArray.get(i);
+    for(var j = 0; j < retrievedBucket.length; j++){
+      var hashIndex = getIndexBelowMaxForKey(retrievedBucket[j][0],toSize);
+      var newStorageRetrievedBucket = newStorage.get(hashIndex);
+      newStorageRetrievedBucket.push(retrievedBucket[j]);
+      newStorage.set(hashIndex,newStorageRetrievedBucket);
+    }
+  }
+  return newStorage;
 }
 
 /*
